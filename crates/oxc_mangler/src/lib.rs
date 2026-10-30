@@ -649,7 +649,19 @@ impl<'a> SlotAssignment<'a> {
                 slot_liveness
                     .iter()
                     .enumerate()
-                    .filter(|(_, slot_liveness)| !slot_liveness.has_bit(scope_id.index()))
+                    .filter(|(_, slot_liveness)| {
+                        if slot_liveness.has_bit(scope_id.index()) {
+                            return false;
+                        }
+                        if scoping.scope_flags(scope_id).is_catch_clause() {
+                            if let Some(fn_scope) = scoping.scope_ancestors(scope_id).find(|&a| scoping.scope_flags(a).is_function()) {
+                                if slot_liveness.has_bit(fn_scope.index()) {
+                                    return false;
+                                }
+                            }
+                        }
+                        true
+                    })
                     .map(
                         // `slot_liveness` is an arena `Vec`, so its indexes cannot exceed `u32::MAX`
                         #[expect(clippy::cast_possible_truncation)]
