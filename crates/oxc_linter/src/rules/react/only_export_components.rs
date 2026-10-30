@@ -656,8 +656,7 @@ impl OnlyExportComponents {
             if !matches!(declarator.id, BindingPattern::BindingIdentifier(_)) {
                 return None;
             }
-            let init = declarator.init.as_ref()?.get_inner_expression();
-            matches!(init, Expression::ObjectExpression(_)).then_some(init)
+            declarator.init.as_ref().map(|init| init.get_inner_expression())
         });
         self.classify_export(name, span, self.can_be_react_function_component(init), init)
     }
