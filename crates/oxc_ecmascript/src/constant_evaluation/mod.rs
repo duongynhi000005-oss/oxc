@@ -247,7 +247,7 @@ fn binary_operation_evaluate_value_to<'a>(
             }
             let left_to_numeric_type = left_to_primitive.to_numeric(ctx);
             let right_to_numeric_type = right_to_primitive.to_numeric(ctx);
-            if left_to_numeric_type.is_number() || right_to_numeric_type.is_number() {
+            if left_to_numeric_type.is_number() && right_to_numeric_type.is_number() {
                 let lval = left.evaluate_value_to_number(ctx)?;
                 let rval = right.evaluate_value_to_number(ctx)?;
                 return Some(ConstantValue::Number(lval + rval));
